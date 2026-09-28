@@ -28,6 +28,12 @@ enum class TlsRole {
 
 class SrtpUtil {
     companion object {
+        /**
+         * Experimental/private DTLS-SRTP profile used only for the SM4 PoC.
+         * It is deliberately not an IANA/WebRTC interoperable profile.
+         */
+        const val SRTP_SM4_GCM = 0xFF00
+
         init {
             SrtpConfig.factoryClass?.let { Aes.setFactoryClassName(it) }
         }
@@ -51,6 +57,9 @@ class SrtpUtil {
                 }
                 "SRTP_AEAD_AES_256_GCM" -> {
                     SRTPProtectionProfile.SRTP_AEAD_AES_256_GCM
+                }
+                "SRTP_SM4_GCM" -> {
+                    SRTP_SM4_GCM
                 }
                 else -> throw IllegalArgumentException("Unsupported SRTP protection profile: $profileName")
             }
@@ -118,6 +127,17 @@ class SrtpUtil {
                         cipherKeyLength = 256 / 8,
                         cipherSaltLength = 96 / 8,
                         cipherName = SrtpPolicy.AESGCM_ENCRYPTION,
+                        authFunctionName = SrtpPolicy.NULL_AUTHENTICATION,
+                        authKeyLength = 0,
+                        rtcpAuthTagLength = 128 / 8,
+                        rtpAuthTagLength = 128 / 8
+                    )
+                }
+                SRTP_SM4_GCM -> {
+                    SrtpProfileInformation(
+                        cipherKeyLength = 128 / 8,
+                        cipherSaltLength = 96 / 8,
+                        cipherName = SrtpPolicy.SM4GCM_ENCRYPTION,
                         authFunctionName = SrtpPolicy.NULL_AUTHENTICATION,
                         authKeyLength = 0,
                         rtcpAuthTagLength = 128 / 8,
