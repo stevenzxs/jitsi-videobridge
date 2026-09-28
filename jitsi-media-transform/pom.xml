@@ -20,9 +20,9 @@
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jitsi-srtp</artifactId>
-            <version>1.1-23-gaf3cd06</version>
+            <groupId>org.stevenzxs.jitsi</groupId>
+            <artifactId>jitsi-srtp-gm</artifactId>
+            <version>1.1.23-gm1</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -313,6 +313,11 @@
     </build>
 
     <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/stevenzxs/jitsi-srtp</url>
+        </repository>
         <repository>
             <id>jitsi-maven-repository-releases</id>
             <layout>default</layout>
