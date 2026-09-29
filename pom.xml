@@ -78,6 +78,14 @@
         <module>jvb</module>
     </modules>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/stevenzxs/jitsi-videobridge</url>
+        </repository>
+    </distributionManagement>
+
     <dependencyManagement>
         <dependencies>
             <!-- Pin all Jackson artifacts to a single version. Transitive deps (jersey, jicoco) otherwise
