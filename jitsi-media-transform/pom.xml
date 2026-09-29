@@ -22,7 +22,7 @@
         <dependency>
             <groupId>org.stevenzxs.jitsi</groupId>
             <artifactId>jitsi-srtp-gm</artifactId>
-            <version>1.1.23-gm1</version>
+            <version>1.1.23-gm2</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

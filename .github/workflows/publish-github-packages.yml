@@ -1,0 +1,78 @@
+name: Publish GM artifact to GitHub Packages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - gm-sm4-srtp
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    env:
+      GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GH_PACKAGES_TOKEN
+          cache: maven
+
+      - name: Build jitsi-videobridge-gm
+        env:
+          GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+        run: >-
+          mvn --batch-mode --no-transfer-progress
+          -DskipTests
+          -Dcheckstyle.skip=true
+          -Dspotbugs.skip=true
+          -Dktlint.skip=true
+          package
+
+      - name: Publish Maven artifacts
+        env:
+          GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+        run: |
+          deploy_file() {
+            mvn --batch-mode --no-transfer-progress \
+              org.apache.maven.plugins:maven-deploy-plugin:2.8.2:deploy-file \
+              "$@" \
+              -DrepositoryId=github \
+              -Durl=https://maven.pkg.github.com/stevenzxs/jitsi-videobridge
+          }
+
+          deploy_file \
+            -Dfile=pom.xml \
+            -DpomFile=pom.xml
+
+          deploy_file \
+            -Dfile=rtp/target/rtp-2.3-SNAPSHOT.jar \
+            -DpomFile=rtp/pom.xml \
+            -Dsources=rtp/target/rtp-2.3-SNAPSHOT-sources.jar
+
+          deploy_file \
+            -Dfile=jitsi-media-transform/target/jitsi-media-transform-2.3-SNAPSHOT.jar \
+            -DpomFile=jitsi-media-transform/pom.xml \
+            -Dsources=jitsi-media-transform/target/jitsi-media-transform-2.3-SNAPSHOT-sources.jar
+
+          deploy_file \
+            -Dfile=jvb/target/jitsi-videobridge-gm-2.3-SNAPSHOT.jar \
+            -DpomFile=jvb/pom.xml \
+            -Dsources=jvb/target/jitsi-videobridge-gm-2.3-SNAPSHOT-sources.jar
+
+      - name: Upload runtime archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: jitsi-videobridge-gm
+          path: jvb/target/jitsi-videobridge-gm-2.3-SNAPSHOT-archive.zip
