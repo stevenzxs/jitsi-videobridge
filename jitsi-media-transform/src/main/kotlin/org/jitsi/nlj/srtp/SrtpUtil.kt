@@ -31,8 +31,10 @@ class SrtpUtil {
         /**
          * Experimental/private DTLS-SRTP profile used only for the SM4 PoC.
          * It is deliberately not an IANA/WebRTC interoperable profile.
+         * The ID is frozen to 0x0100 by docs/DTLS-SRTP-GM-PROTOCOL.md and must
+         * match the Electron/libwebrtc/libsrtp client stack exactly.
          */
-        const val SRTP_SM4_GCM = 0xFF00
+        const val SRTP_SM4_GCM = 0x0100
 
         init {
             SrtpConfig.factoryClass?.let { Aes.setFactoryClassName(it) }
